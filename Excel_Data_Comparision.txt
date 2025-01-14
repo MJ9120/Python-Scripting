@@ -11,9 +11,9 @@ def get_column_indices(headers, header_names):
     return {header_name: get_header_index(headers, header_name) for header_name in header_names}
 
 # Define the file paths
-cc_old_path = r'C:\Users\Manjunath_MJalade\OneDrive - Dell Technologies\Desktop\Excel\DHC_Old.xlsx'
-cc_new_path = r'C:\Users\Manjunath_MJalade\OneDrive - Dell Technologies\Desktop\Excel\DHC_New.xlsx'
-output_path = r'C:\Users\Manjunath_MJalade\OneDrive - Dell Technologies\Desktop\Excel\DHC_New_Updated.xlsx'
+cc_old_path = r'C:\Users\User\OneDrive\Desktop\Excel\Old.xlsx'
+cc_new_path = r'C:\Users\User\OneDrive\Desktop\Excel\New.xlsx'
+output_path = r'C:\Users\User\OneDrive\Desktop\Excel\New_Updated.xlsx'
 
 # Load the Excel workbooks
 cc_old_wb = load_workbook(cc_old_path)
