@@ -1,0 +1,56 @@
+name: Code Quality and Security Checks
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt || true  # Handle optional or missing requirements
+
+    - name: Compile Python code
+      run: |
+        echo "Compiling Python code to check for syntax errors..."
+        python -m compileall .
+
+    - name: Run Pylint
+      run: |
+        echo "Running pylint for static code analysis..."
+        pip install pylint
+        pylint $(git ls-files '*.py')
+
+    - name: Run Trivy for dependency scanning
+      uses: aquasecurity/trivy-action@v0.16.1
+      with:
+        scan-type: fs
+        scan-ref: .
+        format: table
+        severity: CRITICAL,HIGH
+
+    - name: Install Bandit for security checks
+      run: |
+        pip install bandit
+    - name: Run Bandit (Security Linter)
+      run: |
+        bandit -r . -ll
+
+    - name: Run GitLeaks to detect secrets
+      uses: gitleaks/gitleaks-action@v2
+      with:
+        config: ""  # Uses default config, or customize by adding .gitleaks.toml in the root
+
