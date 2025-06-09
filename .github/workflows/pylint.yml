@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt || true  # Handle optional or missing requirements
+        pip install -r requirements.txt || true  # Skip if no file exists
 
     - name: Compile Python code
       run: |
@@ -34,23 +34,25 @@ jobs:
         pip install pylint
         pylint $(git ls-files '*.py')
 
-    - name: Run Trivy for dependency scanning
-      uses: aquasecurity/trivy-action@v0.16.1
+    - name: Install Bandit for security checks
+      run: |
+        pip install bandit
+
+    - name: Run Bandit (Security Linter)
+      run: |
+        echo "Running Bandit for Python security issues..."
+        bandit -r . -ll
+
+    - name: Run Trivy for filesystem vulnerability scanning
+      uses: aquasecurity/trivy-action@master
       with:
         scan-type: fs
         scan-ref: .
         format: table
         severity: CRITICAL,HIGH
 
-    - name: Install Bandit for security checks
-      run: |
-        pip install bandit
-    - name: Run Bandit (Security Linter)
-      run: |
-        bandit -r . -ll
-
     - name: Run GitLeaks to detect secrets
       uses: gitleaks/gitleaks-action@v2
       with:
-        config: ""  # Uses default config, or customize by adding .gitleaks.toml in the root
+        config: ""  # Uses default config, can be replaced with `.gitleaks.toml`
 
