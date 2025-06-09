@@ -55,4 +55,3 @@ jobs:
       uses: gitleaks/gitleaks-action@v2
       with:
         config: ""  # Uses default config, can be replaced with `.gitleaks.toml`
-
